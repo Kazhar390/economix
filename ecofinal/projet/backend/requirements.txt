@@ -1,0 +1,5 @@
+flask>=2.3.0
+flask-cors>=3.0.10
+numpy
+numpy-financial==1.0.0
+python-dotenv>=0.19.0

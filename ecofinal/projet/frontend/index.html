@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economic Analysis Tool for Software Projects</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-top: 30px;
+        }
+        .module {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f8fafc;
+        }
+        .module-title {
+            color: #0d6efd;
+            margin-bottom: 20px;
+        }
+        .result-box {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+        .nav-tabs {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Economic Analysis Tool</h1>
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="cocomo-tab" data-bs-toggle="tab" data-bs-target="#cocomo" type="button">COCOMO</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="fp-tab" data-bs-toggle="tab" data-bs-target="#fp" type="button">Function Points</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="finance-tab" data-bs-toggle="tab" data-bs-target="#finance" type="button">Financial Analysis</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="heuristic-tab" data-bs-toggle="tab" data-bs-target="#heuristic" type="button">Heuristic Estimation</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+            <!-- Module COCOMO -->
+            <div class="tab-pane fade show active" id="cocomo" role="tabpanel">
+                <div class="module">
+                    <h3 class="module-title">COCOMO Estimation</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="loc" class="form-label">Lines of Code (LOC)</label>
+                                <input type="number" class="form-control" id="loc" placeholder="10000">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="mode" class="form-label">Project Type</label>
+                                <select class="form-select" id="mode">
+                                    <option value="organic">Organic (simple)</option>
+                                    <option value="semi-detached">Semi-detached (medium)</option>
+                                    <option value="embedded">Embedded (complex)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="runCocomoEstimation()">Calculate</button>
+                    <div id="cocomo-result" class="result-box mt-3"></div>
+                    <canvas id="cocomo-chart" class="chart-container"></canvas>
+                </div>
+            </div>
+            
+            <!-- Module Function Points -->
+            <div class="tab-pane fade" id="fp" role="tabpanel">
+                <div class="module">
+                    <h3 class="module-title">Function Points</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5>External Inputs</h5>
+                            <div class="mb-3">
+                                <label class="form-label">Simple</label>
+                                <input type="number" class="form-control ei-low" value="0">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Average</label>
+                                <input type="number" class="form-control ei-average" value="0">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Complex</label>
+                                <input type="number" class="form-control ei-high" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>External Outputs</h5>
+                            <!-- Same structure as for inputs -->
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Language</h5>
+                            <select class="form-select" id="fp-language">
+                                <option value="java">Java</option>
+                                <option value="c">C</option>
+                                <option value="python">Python</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="runFpEstimation()">Calculate</button>
+                    <div id="fp-result" class="result-box mt-3"></div>
+                    <canvas id="fp-chart" class="chart-container"></canvas>
+                    
+                    <!-- Supprimer tout ce bloc de la ligne 136 à 151 -->
+                    <div id="cocomo-chart" class="chart-container"></div>
+                    <!-- Par -->
+                    <canvas id="cocomo-chart" class="chart-container"></canvas>
+                    
+                    <!-- Remplacer -->
+                    <div id="expert-chart" class="chart-container"></div>
+                    <!-- Par -->
+                    <canvas id="expert-chart" class="chart-container"></canvas>
+                    
+                    <!-- Remplacer -->
+                    <div id="delphi-convergence-chart" class="chart-container"></div>
+                    <!-- Par -->
+                    <canvas id="delphi-convergence-chart" class="chart-container"></canvas>
+                </div>
+            </div>
+            
+            <!-- Module Financial Analysis -->
+            <div class="tab-pane fade" id="finance" role="tabpanel">
+                <div class="module">
+                    <h3 class="module-title">Financial Analysis</h3>
+                    <div class="mb-3">
+                        <label for="investment" class="form-label">Initial Investment</label>
+                        <input type="number" class="form-control" id="investment" placeholder="50000">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cash Flow (annual)</label>
+                        <div id="cashflows-container">
+                            <input type="number" class="form-control mb-2 cashflow" placeholder="Year 1" value="15000">
+                            <input type="number" class="form-control mb-2 cashflow" placeholder="Year 2" value="20000">
+                        </div>
+                        <button class="btn btn-sm btn-secondary" onclick="addCashflowField()">+ Add a year</button>
+                    </div>
+                    <button class="btn btn-primary" onclick="runFinancialAnalysis()">Analyze</button>
+                    <div id="finance-result" class="result-box mt-3"></div>
+                    <!-- Remplacer cette ligne -->
+                    <canvas id="finance-chart" class="chart-container"></canvas>
+                </div>
+            </div>
+            
+            <!-- Module Heuristic Estimation -->
+            <div class="tab-pane fade" id="heuristic" role="tabpanel">
+                <div class="module">
+                    <h3 class="module-title">Heuristic Estimation</h3>
+                    
+                    <ul class="nav nav-pills mb-3" id="heuristic-subtabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="expert-tab" data-bs-toggle="pill" data-bs-target="#expert" type="button">Expert Judgment</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="delphi-tab" data-bs-toggle="pill" data-bs-target="#delphi" type="button">Delphi Method</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="heuristic-subtabs-content">
+                        <!-- Expert Judgment -->
+                        <div class="tab-pane fade show active" id="expert" role="tabpanel">
+                            <div id="experts-container">
+                                <div class="expert-input mb-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control expert-name" placeholder="Expert name">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="number" class="form-control expert-estimate" placeholder="Estimation">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select class="form-select expert-confidence">
+                                                <option value="">Confidence</option>
+                                                <option value="1">1 - Very low</option>
+                                                <option value="3">3 - Low</option>
+                                                <option value="5">5 - Medium</option>
+                                                <option value="7">7 - High</option>
+                                                <option value="10">10 - Very high</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary mb-3" onclick="addExpertField()">+ Add an expert</button>
+                            <button class="btn btn-primary" onclick="runExpertJudgmentEstimation()">Calculate</button>
+                            <div id="expert-result" class="result-box mt-3"></div>
+                            <canvas id="expert-chart" class="chart-container"></canvas>
+                            <!-- Supprimer les deux lignes suivantes -->
+                            <!-- Par -->
+                            <!-- <canvas id="expert-chart" class="chart-container"></canvas> -->
+                        </div>
+                        
+                        <!-- Delphi Method -->
+                        <div class="tab-pane fade" id="delphi" role="tabpanel">
+                            <div id="delphi-rounds-container">
+                                <div class="card mb-3">
+                                    <div class="card-header">Round 1</div>
+                                    <div class="card-body">
+                                        <div id="delphi-round-1" class="delphi-round">
+                                            <div class="expert-input mb-3">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <input type="text" class="form-control expert-name" placeholder="Expert name">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input type="number" class="form-control expert-estimate" placeholder="Estimation">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <select class="form-select expert-confidence">
+                                                            <option value="">Confidence</option>
+                                                            <option value="1">1 - Very low</option>
+                                                            <option value="3">3 - Low</option>
+                                                            <option value="5">5 - Medium</option>
+                                                            <option value="7">7 - High</option>
+                                                            <option value="10">10 - Very high</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-secondary btn-sm" onclick="addDelphiExpertField(1)">+ Add an expert</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary mb-3" onclick="addDelphiRound()">+ Add a round</button>
+                            <button class="btn btn-primary" onclick="runDelphiMethodEstimation()">Calculate</button>
+                            <div id="delphi-result" class="result-box mt-3"></div>
+                            <canvas id="delphi-convergence-chart" class="chart-container"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="skript.js"></script>
+</body>
+</html>
